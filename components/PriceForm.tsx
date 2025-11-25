@@ -3,18 +3,21 @@
 import { useState } from 'react';
 import { predictPrice } from '@/lib/api';
 import { HouseInputs, PredictPriceResponse } from '@/lib/types';
+import { UNIVERSITIES, HOUSE_TYPES } from '@/lib/constants';
 
-const UNIVERSITIES = ["Iowa State University", "University of Iowa", "Other"];
-const TYPES = ["Single Family", "Multi Family", "Multiple Occupancy"];
+// Helper type to allow empty strings in form state while typing
+type FormInputs = {
+  [K in keyof HouseInputs]: HouseInputs[K] extends number ? number | '' : HouseInputs[K];
+};
 
 export default function PriceForm() {
-  const [inputs, setInputs] = useState<HouseInputs>({
+  const [inputs, setInputs] = useState<FormInputs>({
     Beds: 3,
     Baths: 2,
     Sqft_home: 1500,
     Sqft_lot: 5000,
     Age: 10,
-    Type: TYPES[0],
+    Type: HOUSE_TYPES[0],
     University: UNIVERSITIES[0],
   });
 
@@ -26,7 +29,9 @@ export default function PriceForm() {
     const { name, value, type } = e.target;
     setInputs(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : value,
+      [name]: type === 'number' 
+        ? (value === '' ? '' : parseFloat(value))
+        : value,
     }));
   };
 
@@ -36,8 +41,18 @@ export default function PriceForm() {
     setError(null);
     setResult(null);
 
+    // Convert empty strings to 0 or handle validation before submitting
+    const submitData: HouseInputs = {
+      ...inputs,
+      Beds: inputs.Beds === '' ? 0 : inputs.Beds,
+      Baths: inputs.Baths === '' ? 0 : inputs.Baths,
+      Sqft_home: inputs.Sqft_home === '' ? 0 : inputs.Sqft_home,
+      Sqft_lot: inputs.Sqft_lot === '' ? 0 : inputs.Sqft_lot,
+      Age: inputs.Age === '' ? 0 : inputs.Age,
+    };
+
     try {
-      const data = await predictPrice(inputs);
+      const data = await predictPrice(submitData);
       setResult(data);
     } catch (err: any) {
       setError(err.message || 'Failed to predict price');
@@ -113,7 +128,7 @@ export default function PriceForm() {
               onChange={handleChange}
               className="w-full bg-gray-50 border-none rounded-xl py-2.5 px-3 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-blue-500"
             >
-              {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              {HOUSE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div className="flex flex-col gap-1.5">

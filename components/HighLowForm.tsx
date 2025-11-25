@@ -3,18 +3,20 @@
 import { useState } from 'react';
 import { predictHighLow } from '@/lib/api';
 import { HighLowInputs, PredictHighLowResponse } from '@/lib/types';
+import { UNIVERSITIES, HOUSE_TYPES } from '@/lib/constants';
 
-const UNIVERSITIES = ["Iowa State University", "University of Iowa", "Other"];
-const TYPES = ["Single Family", "Multi Family", "Multiple Occupancy"];
+type FormInputs = {
+  [K in keyof HighLowInputs]: HighLowInputs[K] extends number | undefined ? number | '' : HighLowInputs[K];
+};
 
 export default function HighLowForm() {
-  const [inputs, setInputs] = useState<HighLowInputs>({
+  const [inputs, setInputs] = useState<FormInputs>({
     Beds: 3,
     Baths: 2,
     Sqft_home: 1500,
     Sqft_lot: 5000,
     Age: 10,
-    Type: TYPES[0],
+    Type: HOUSE_TYPES[0],
     University: UNIVERSITIES[0],
     threshold: 0.5
   });
@@ -27,7 +29,9 @@ export default function HighLowForm() {
     const { name, value, type } = e.target;
     setInputs(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : value,
+      [name]: type === 'number' 
+        ? (value === '' ? '' : parseFloat(value))
+        : value,
     }));
   };
 
@@ -37,8 +41,18 @@ export default function HighLowForm() {
     setError(null);
     setResult(null);
 
+    const submitData: HighLowInputs = {
+        ...inputs,
+        Beds: inputs.Beds === '' ? 0 : inputs.Beds,
+        Baths: inputs.Baths === '' ? 0 : inputs.Baths,
+        Sqft_home: inputs.Sqft_home === '' ? 0 : inputs.Sqft_home,
+        Sqft_lot: inputs.Sqft_lot === '' ? 0 : inputs.Sqft_lot,
+        Age: inputs.Age === '' ? 0 : inputs.Age,
+        threshold: inputs.threshold === '' ? 0.5 : inputs.threshold
+    };
+
     try {
-      const data = await predictHighLow(inputs);
+      const data = await predictHighLow(submitData);
       setResult(data);
     } catch (err: any) {
       setError(err.message || 'Failed to classify');
@@ -86,7 +100,7 @@ export default function HighLowForm() {
             <label className="text-xs font-bold text-gray-900 uppercase tracking-wider">Type</label>
             <select name="Type" value={inputs.Type} onChange={handleChange}
               className="w-full bg-gray-50 border-none rounded-xl py-2.5 px-3 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-purple-500">
-              {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              {HOUSE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
