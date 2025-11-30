@@ -37,7 +37,7 @@ export default function Home() {
 
             <p className="text-lg text-white/90 max-w-xl mx-auto mb-12 leading-relaxed font-medium">
               Your dream home, made easy with personalized property solutions
-              and accurate price predictions powered by AI.
+              and accurate price predictions powered by data analytics.
             </p>
         </div>
       </section>
