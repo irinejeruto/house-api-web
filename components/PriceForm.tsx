@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { predictPrice } from '@/lib/api';
 import { HouseInputs, PredictPriceResponse } from '@/lib/types';
-import { UNIVERSITIES, HOUSE_TYPES } from '@/lib/constants';
+import { TOWNS, HOUSE_TYPES } from '@/lib/constants';
 
 // Helper type to allow empty strings in form state while typing
 type FormInputs = {
@@ -18,7 +18,7 @@ export default function PriceForm() {
     Sqft_lot: 5000,
     Age: 10,
     Type: HOUSE_TYPES[0],
-    University: UNIVERSITIES[0],
+    Town: TOWNS[0],
   });
 
   const [result, setResult] = useState<PredictPriceResponse | null>(null);
@@ -132,14 +132,14 @@ export default function PriceForm() {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-gray-900 uppercase tracking-wider">University</label>
+            <label className="text-xs font-bold text-gray-900 uppercase tracking-wider">Town</label>
             <select
-              name="University"
-              value={inputs.University}
+              name="Town"
+              value={inputs.Town}
               onChange={handleChange}
               className="w-full bg-gray-50 border-none rounded-xl py-2.5 px-3 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-blue-500 truncate"
             >
-              {UNIVERSITIES.map(u => <option key={u} value={u}>{u}</option>)}
+              {TOWNS.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
           </div>
         </div>

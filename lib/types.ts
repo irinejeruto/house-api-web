@@ -14,7 +14,7 @@ export interface HouseInputs {
   Sqft_lot: number;
   Age: number;
   Type: string;
-  University: string;
+  Town: string;
 }
 
 export interface PredictPriceResponse {

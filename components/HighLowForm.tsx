@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { predictHighLow } from '@/lib/api';
 import { HighLowInputs, PredictHighLowResponse } from '@/lib/types';
-import { UNIVERSITIES, HOUSE_TYPES } from '@/lib/constants';
+import { TOWNS, HOUSE_TYPES } from '@/lib/constants';
 
 type FormInputs = {
   [K in keyof HighLowInputs]: HighLowInputs[K] extends number | undefined ? number | '' : HighLowInputs[K];
@@ -17,7 +17,7 @@ export default function HighLowForm() {
     Sqft_lot: 5000,
     Age: 10,
     Type: HOUSE_TYPES[0],
-    University: UNIVERSITIES[0],
+    Town: TOWNS[0],
     threshold: 0.5
   });
 
@@ -104,10 +104,10 @@ export default function HighLowForm() {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-gray-900 uppercase tracking-wider">University</label>
-            <select name="University" value={inputs.University} onChange={handleChange}
+            <label className="text-xs font-bold text-gray-900 uppercase tracking-wider">Town</label>
+            <select name="Town" value={inputs.Town} onChange={handleChange}
               className="w-full bg-gray-50 border-none rounded-xl py-2.5 px-3 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-purple-500 truncate">
-              {UNIVERSITIES.map(u => <option key={u} value={u}>{u}</option>)}
+              {TOWNS.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
           </div>
         </div>
